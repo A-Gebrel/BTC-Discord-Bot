@@ -4,9 +4,13 @@ Simple Discord Bot to check Transaction confirmations status (Unconfirmed / Conf
 
 ## Installation
 Install rqeuirements ``pip install requests discord.py``
+
 Add the Discord Bot Token in ``main.py``
+
 Run the script ``py main.py``
+
 ??
+
 Profit
 
 
