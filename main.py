@@ -22,7 +22,9 @@ class client(discord.Client):
 
 client = client()
 tree = app_commands.CommandTree(client)
-    
+
+# Grabbing Confirmations count using method mentioned here
+# https://stackoverflow.com/questions/14989481/blockchain-api-to-determine-transaction-confirmations
 @tree.command(name = "check", description = "Used to check transaction confirmation status")
 async def first_command(interaction, txid:str):
     res = requests.get(f'https://mempool.space/api/tx/{txid}/status')
