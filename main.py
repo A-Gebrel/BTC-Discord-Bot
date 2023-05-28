@@ -1,7 +1,7 @@
 import discord, requests
 from discord import app_commands
 
-DISCORD_TOKEN = "MTEwNzQzMDQ1NTA1NTIzNzEyMg.G4XYvX.f-4-HsA9ravFsyf3pAOMMiR1att0TmjWD91_Gs"
+DISCORD_TOKEN = ""
 
 if(DISCORD_TOKEN == "AUTH_TOKEN_HERE" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
     print("[ERROR] Please add a valid Discord Bot Token!")
