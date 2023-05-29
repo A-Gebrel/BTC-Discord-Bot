@@ -37,23 +37,25 @@ async def first_command(interaction, txid:str):
         if(res['confirmed'] == False):
             embed=discord.Embed(title="Transaction Status", url=f"https://mempool.space/tx/{txid}", description="Transaction has not been confirmed yet", color=0xFF0000)
             embed.add_field(name="Not Confirmed Yet", value=f"{txid}", inline=False)
-            embed.set_footer(text="Developed by banonkiel#0001")
+            embed.set_footer(text="Made with ❤ by banonkiel#0001")
             await interaction.response.send_message(embed=embed)
         else:
-            res2 = requests.get(f'https://blockchain.info/rawtx/{txid}')
-            resp2 = res2.json()
-            txheight = resp2['block_height']
+            # res2 = requests.get(f'https://blockchain.info/rawtx/{txid}')
+            # resp2 = res2.json()
+            # txheight = resp2['block_height']
+            txheight = int(res['block_height'])
         
-            res3 = requests.get(f'https://blockchain.info/latestblock')
-            resp3 = res3.json()
-            curheight = resp3['height']
+            res3 = requests.get(f'https://mempool.space/api/blocks/tip/height')
+            # resp3 = res3.json()
+            curheight = int(res3.json())
+            # curheight = resp3['height']
 
             confirmations = curheight - txheight + 1
             # print(confirmations)
             # await interaction.response.send_message(f"Transaction has been confirmed :) [{confirmations} confirmation(s)]")
             embed=discord.Embed(title="Transaction Status", url=f"https://mempool.space/tx/{txid}", description="Transaction has been confirmed", color=0x04ff00)
             embed.add_field(name=f"Confirmed [{confirmations}]", value=f"{txid}", inline=False)
-            embed.set_footer(text="Developed by banonkiel#0001")
+            embed.set_footer(text="Made with ❤ by banonkiel#0001")
             await interaction.response.send_message(embed=embed)
 
 client.run(DISCORD_TOKEN)
