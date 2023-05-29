@@ -1,7 +1,9 @@
 import discord, requests
 from discord import app_commands
 
-DISCORD_TOKEN = ""
+# Ask for Token on start
+# Another way of using this would be a config file or env variables
+DISCORD_TOKEN = input("Please Enter Discord Bot Token: ")
 
 if(DISCORD_TOKEN == "AUTH_TOKEN_HERE" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
     print("[ERROR] Please add a valid Discord Bot Token!")
