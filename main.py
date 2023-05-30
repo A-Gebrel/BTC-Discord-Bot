@@ -58,4 +58,20 @@ async def first_command(interaction, txid:str):
             embed.set_footer(text="Made with ❤ by banonkiel#0001")
             await interaction.response.send_message(embed=embed)
 
+@tree.command(name = "fees", description = "Used to get optimal BTC fees")
+async def second_command(interaction):
+    res = requests.get(f'https://mempool.space/api/v1/fees/recommended')
+    if(res.status_code != 200):
+        await interaction.response.send_message(f"is mempool down? :'(")
+    else:
+        resp = res.json()
+        embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees", color=0xFF0000)
+        embed.add_field(name=f"Within 10 mins (next block)", value=f"{resp['fastestFee']} sat/vB", inline=False)
+        embed.add_field(name=f"Within 30 mins", value=f"{resp['halfHourFee']} sat/vB", inline=False)
+        embed.add_field(name=f"Within 60 mins", value=f"{resp['hourFee']} sat/vB", inline=False)
+        embed.add_field(name=f"Don't hold your breath ", value=f"{resp['economyFee']} sat/vB", inline=False)
+        embed.add_field(name=f"Won't be purged: ", value=f"{resp['minimumFee']} sat/vB", inline=False)
+        embed.set_footer(text="Made with ❤ by banonkiel#0001")
+        await interaction.response.send_message(embed=embed)
+
 client.run(DISCORD_TOKEN)
