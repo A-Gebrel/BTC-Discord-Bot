@@ -1,9 +1,18 @@
-import discord, requests
+import discord, requests, json, time
 from discord import app_commands
 
+
+def get_config():
+    config = []
+    with open('config.json', 'r', encoding='utf-8') as file_object:
+        config = json.load(file_object)
+    return config
+
+config = get_config()
 # Ask for Token on start
 # Another way of using this would be a config file or env variables
-DISCORD_TOKEN = input("Please Enter Discord Bot Token: ")
+DISCORD_TOKEN = config['discord_token']
+API_KEY = config['api_key']
 
 if(DISCORD_TOKEN == "AUTH_TOKEN_HERE" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
     print("[ERROR] Please add a valid Discord Bot Token!")
@@ -65,7 +74,7 @@ async def second_command(interaction):
         await interaction.response.send_message(f"is mempool down? :'(")
     else:
         resp = res.json()
-        embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees", color=0xFF0000)
+        embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees", color=0x04ff00)
         embed.add_field(name=f"Within 10 mins (next block)", value=f"{resp['fastestFee']} sat/vB", inline=False)
         embed.add_field(name=f"Within 30 mins", value=f"{resp['halfHourFee']} sat/vB", inline=False)
         embed.add_field(name=f"Within 60 mins", value=f"{resp['hourFee']} sat/vB", inline=False)
@@ -73,5 +82,28 @@ async def second_command(interaction):
         embed.add_field(name=f"Won't be purged: ", value=f"{resp['minimumFee']} sat/vB", inline=False)
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
+
+@tree.command(name="price", description = "Used to get current BTC price")
+async def third_command(interaction):
+    headers = {
+        'Accepts': 'application/json',
+        "X-CMC_PRO_API_KEY": API_KEY
+    }
+    session = requests.Session()
+    session.headers.update(headers)
+    res = session.get("https://pro-api.coinmarketcap.com/v1/tools/price-conversion", params={"amount": 1, "id": "1"})
+    if(res.status_code != 200):
+        await interaction.response.send_message("Can't reach Coinmarket API?")
+        # print(res.json())
+    else:
+        resp = res.json()
+        price = resp['data']['quote']['USD']['price']
+        price = '%.2f'%(price)
+        embed=discord.Embed(title="Current BTC Price", url=f"https://coinmarketcap.com/currencies/bitcoin/", description="Below you can see current Bitcoin Price", color=0x04ff00)
+        embed.add_field(name=f"Bitcoin Price", value=f"${price}", inline=False)
+        embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
+        embed.set_footer(text="Made with ❤ by banonkiel#0001")
+        await interaction.response.send_message(embed=embed)
+        
 
 client.run(DISCORD_TOKEN)
