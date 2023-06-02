@@ -28,6 +28,7 @@ class client(discord.Client):
         if not self.synced:
             await tree.sync()
             self.synced = True
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="BTC Transactions"))
         # print(f"Logged in as {self.user}")
 
 
