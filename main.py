@@ -100,10 +100,9 @@ async def third_command(interaction):
         price = resp['data']['quote']['USD']['price']
         price = '%.2f'%(price)
         embed=discord.Embed(title="Current BTC Price", url=f"https://coinmarketcap.com/currencies/bitcoin/", description="Below you can see current Bitcoin Price", color=0x04ff00)
-        embed.add_field(name=f"Bitcoin Price", value=f"${price}", inline=False)
+        embed.add_field(name=f"Bitcoin Price", value=f"${price} USD", inline=False)
         embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
         
-
 client.run(DISCORD_TOKEN)
