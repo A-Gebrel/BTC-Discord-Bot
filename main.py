@@ -85,23 +85,34 @@ async def second_command(interaction):
         await interaction.response.send_message(embed=embed)
 
 @tree.command(name="price", description = "Used to get current BTC price")
-async def third_command(interaction):
+async def third_command(interaction, crypto:str):
     headers = {
         'Accepts': 'application/json',
         "X-CMC_PRO_API_KEY": API_KEY
     }
     session = requests.Session()
     session.headers.update(headers)
-    res = session.get("https://pro-api.coinmarketcap.com/v1/tools/price-conversion", params={"amount": 1, "id": "1"})
+
+    if(crypto == "BTC" or crypto == "ETH"):
+        pass
+    else:
+        await interaction.response.send_message("Invalid/Unsupport Crypto | Currently we only support BTC/ETH")
+        return
+    
+    res = session.get("https://pro-api.coinmarketcap.com/v1/tools/price-conversion", params={"amount": 1, "symbol": crypto})
     if(res.status_code != 200):
         await interaction.response.send_message("Can't reach Coinmarket API?")
-        # print(res.json())
     else:
         resp = res.json()
         price = resp['data']['quote']['USD']['price']
-        price = '%.2f'%(price)
-        embed=discord.Embed(title="Current BTC Price", url=f"https://coinmarketcap.com/currencies/bitcoin/", description="Below you can see current Bitcoin Price", color=0x04ff00)
-        embed.add_field(name=f"Bitcoin Price", value=f"${price} USD", inline=False)
+        # price = '%.2f'%(price)
+        price = f"{price:,.2f}"
+        if(id == 1):
+            embed=discord.Embed(title="Current BTC Price", url=f"https://coinmarketcap.com/currencies/bitcoin/", description="Below you can see current Bitcoin Price", color=0x04ff00)
+            embed.add_field(name=f"Bitcoin Price", value=f"${price} USD", inline=False)
+        else:
+            embed=discord.Embed(title="Current ETH Price", url=f"https://coinmarketcap.com/currencies/ethereum/", description="Below you can see current Ethereum Price", color=0x04ff00)
+            embed.add_field(name=f"Ethereum Price", value=f"${price} USD", inline=False)
         embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
