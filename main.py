@@ -1,7 +1,6 @@
 import discord, requests, json, time
 from discord import app_commands
 
-
 def get_config():
     config = []
     with open('config.json', 'r', encoding='utf-8') as file_object:
@@ -9,13 +8,21 @@ def get_config():
     return config
 
 config = get_config()
+
 # Ask for Token on start
 # Another way of using this would be a config file or env variables
 DISCORD_TOKEN = config['discord_token']
 API_KEY = config['api_key']
 
-if(DISCORD_TOKEN == "AUTH_TOKEN_HERE" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
+
+# Let's confirm Discord Token is -probably- valid from default config.json
+if(DISCORD_TOKEN == "discord_bot_token_here" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
     print("[ERROR] Please add a valid Discord Bot Token!")
+    exit()
+
+# Let's confirm API is -probably- valid from default config.json
+if(API_KEY == "api_key_here" or API_KEY == None or API_KEY == ""):
+    print("[ERROR] Please add a valid CoinMarketCap API Key!")
     exit()
 
 class client(discord.Client):
@@ -28,7 +35,7 @@ class client(discord.Client):
         if not self.synced:
             await tree.sync()
             self.synced = True
-        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="BTC Transactions"))
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="BTC Transactions ❤"))
         # print(f"Logged in as {self.user}")
 
 
@@ -38,7 +45,7 @@ tree = app_commands.CommandTree(client)
 # Grabbing Confirmations count using method mentioned here
 # https://stackoverflow.com/questions/14989481/blockchain-api-to-determine-transaction-confirmations
 @tree.command(name = "check", description = "Used to check transaction confirmation status")
-async def first_command(interaction, txid:str):
+async def check(interaction, txid:str):
     res = requests.get(f'https://mempool.space/api/tx/{txid}/status')
     if(res.status_code != 200):
         await interaction.response.send_message(f"is {txid} a valid TXID? :'(")
@@ -50,32 +57,23 @@ async def first_command(interaction, txid:str):
             embed.set_footer(text="Made with ❤ by banonkiel#0001")
             await interaction.response.send_message(embed=embed)
         else:
-            # res2 = requests.get(f'https://blockchain.info/rawtx/{txid}')
-            # resp2 = res2.json()
-            # txheight = resp2['block_height']
             txheight = int(res['block_height'])
-        
             res3 = requests.get(f'https://mempool.space/api/blocks/tip/height')
-            # resp3 = res3.json()
             curheight = int(res3.json())
-            # curheight = resp3['height']
-
             confirmations = curheight - txheight + 1
-            # print(confirmations)
-            # await interaction.response.send_message(f"Transaction has been confirmed :) [{confirmations} confirmation(s)]")
             embed=discord.Embed(title="Transaction Status", url=f"https://mempool.space/tx/{txid}", description="Transaction has been confirmed", color=0x04ff00)
             embed.add_field(name=f"Confirmed [{confirmations}]", value=f"{txid}", inline=False)
             embed.set_footer(text="Made with ❤ by banonkiel#0001")
             await interaction.response.send_message(embed=embed)
 
 @tree.command(name = "fees", description = "Used to get optimal BTC fees")
-async def second_command(interaction):
+async def fees(interaction):
     res = requests.get(f'https://mempool.space/api/v1/fees/recommended')
     if(res.status_code != 200):
-        await interaction.response.send_message(f"is mempool down? :'(")
+        await interaction.response.send_message(f"Is mempool down? :'(")
     else:
         resp = res.json()
-        embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees", color=0x04ff00)
+        embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees.\n Remember that mining blocks might take longer if the network is congested.", color=0x04ff00)
         embed.add_field(name=f"Within 10 mins (next block)", value=f"{resp['fastestFee']} sat/vB", inline=False)
         embed.add_field(name=f"Within 30 mins", value=f"{resp['halfHourFee']} sat/vB", inline=False)
         embed.add_field(name=f"Within 60 mins", value=f"{resp['hourFee']} sat/vB", inline=False)
@@ -85,7 +83,7 @@ async def second_command(interaction):
         await interaction.response.send_message(embed=embed)
 
 @tree.command(name="price", description = "Used to get current BTC price")
-async def third_command(interaction, crypto:str):
+async def price(interaction, crypto:str):
     headers = {
         'Accepts': 'application/json',
         "X-CMC_PRO_API_KEY": API_KEY
