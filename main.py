@@ -114,5 +114,15 @@ async def price(interaction, crypto:str):
         embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
-        
+
+@tree.command(name = "help", description = "Bot help & Commands List")
+async def help(interaction):
+    embed=discord.Embed(title="Help & Commands List", description="Thank you for using this crappy bot, hope you liked it so far.", color=0x04ff00)
+    embed.add_field(name=f"/help", value=f"Displays this message and currently supported commands", inline=False)
+    embed.add_field(name=f"/fees", value=f"Shows BTC fees depending on how fast you need it confirmed", inline=False)
+    embed.add_field(name=f"/price", value=f"used as /price <BTC/ETH> to list current price of BTC or ETH (more crypto support soon)", inline=False)
+    embed.add_field(name=f"/check", value=f"used to check a BTC transaction for confirmations and list how many confirmations transaction has if confirmed.", inline=False)
+    embed.set_footer(text="Made with ❤ by banonkiel#0001")
+    await interaction.response.send_message(embed=embed)
+
 client.run(DISCORD_TOKEN)
