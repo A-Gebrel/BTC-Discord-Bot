@@ -1,5 +1,7 @@
-# BTC-Discord-Bot
-Simple Discord Bot to check Transaction confirmations status (Unconfirmed / Confirmed with how many confirmations)
+# Crypto Bot
+- Check Transaction confirmations status (Unconfirmed / Confirmed with how many confirmations)
+- Get Optimal fees (BTC)
+- Get Crypto Currencies (currently BTC/ETH supported, more to come)
 
 > **FYI** - Script is written in Python 3.10
 
