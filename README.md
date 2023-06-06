@@ -6,20 +6,15 @@
 > **FYI** - Script is written in Python 3.10
 
 ## Installation
-Install rqeuirements ``pip install requests discord.py``
-
-Add the Discord Bot Token and CoinMarketCap API key in ``config.json``
-
-Run the script ``py main.py`` or ``python3 main.py`` if you are on linux
-
-
-??
-
-Profit
+- Install rqeuirements ``pip install requests discord.py``
+- Add the Discord Bot Token and CoinMarketCap API key in ``config.json``
+- Run the script ``py main.py`` or ``python3 main.py`` if you are on linux
+- ??
+- Profit
 
 
 ## Usage
-Using slash command ``/check <txid>``
+Using slash command ``/help`` to list everything you need to use the bot
 
 
 
