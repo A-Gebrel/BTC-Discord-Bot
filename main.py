@@ -1,4 +1,4 @@
-import discord, requests, json, time
+import discord, requests, json, time, os.path
 from discord import app_commands
 
 def get_config():
@@ -14,6 +14,10 @@ config = get_config()
 DISCORD_TOKEN = config['discord_token']
 API_KEY = config['api_key']
 
+# Check if config.json exists in the directory
+if(os.path.exists('config.json') == False):
+    print("[ERROR] Config.json not found.")
+    exit()
 
 # Let's confirm Discord Token is -probably- valid from default config.json
 if(DISCORD_TOKEN == "discord_bot_token_here" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
