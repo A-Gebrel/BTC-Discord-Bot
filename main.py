@@ -9,6 +9,7 @@ def get_config():
 
 config = get_config()
 
+crypto_list = {"BTC", "ETH", "BCH", "LTC", "XRP", "SOL", "XMR", "DOGE"}
 # Ask for Token on start
 # Another way of using this would be a config file or env variables
 DISCORD_TOKEN = config['discord_token']
@@ -87,6 +88,16 @@ async def fees(interaction):
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
 
+@tree.command(name = "cryptos", description = "Used to get currently supported Crypto-currencies list.")
+async def cryptos(interaction):
+    res = ""
+    for i in crypto_list:
+        res += i + " "
+    embed=discord.Embed(title="Currently Supported Cryptos", description="Below you can see all the currently supported Crpyots for /price", color=0x04ff00)
+    embed.add_field(name=f"", value=f"{res}", inline=False)
+    embed.set_footer(text="Made with ❤ by banonkiel#0001")
+    await interaction.response.send_message(embed=embed)
+
 @tree.command(name="price", description = "Used to get current BTC price")
 async def price(interaction, crypto:str):
     headers = {
@@ -96,12 +107,11 @@ async def price(interaction, crypto:str):
     session = requests.Session()
     session.headers.update(headers)
 
-    if(crypto == "BTC" or crypto == "ETH"):
+    if(crypto in crypto_list):
         pass
     else:
-        await interaction.response.send_message("Invalid/Unsupport Crypto | Currently we only support BTC/ETH")
+        await interaction.response.send_message("Invalid/Unsupport Crypto | Check /cryptos to check currently supported currencies.")
         return
-    
     res = session.get("https://pro-api.coinmarketcap.com/v1/tools/price-conversion", params={"amount": 1, "symbol": crypto})
     if(res.status_code != 200):
         await interaction.response.send_message("Can't reach Coinmarket API?")
@@ -110,12 +120,8 @@ async def price(interaction, crypto:str):
         price = resp['data']['quote']['USD']['price']
         # price = '%.2f'%(price)
         price = f"{price:,.2f}"
-        if(id == 1):
-            embed=discord.Embed(title="Current BTC Price", url=f"https://coinmarketcap.com/currencies/bitcoin/", description="Below you can see current Bitcoin Price", color=0x04ff00)
-            embed.add_field(name=f"Bitcoin Price", value=f"${price} USD", inline=False)
-        else:
-            embed=discord.Embed(title="Current ETH Price", url=f"https://coinmarketcap.com/currencies/ethereum/", description="Below you can see current Ethereum Price", color=0x04ff00)
-            embed.add_field(name=f"Ethereum Price", value=f"${price} USD", inline=False)
+        embed=discord.Embed(title=f"Current {crypto} Price", description=f"Below you can see current {crypto}'s Price", color=0x04ff00)
+        embed.add_field(name=f"{crypto} Price", value=f"${price} USD", inline=False)
         embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
@@ -125,7 +131,8 @@ async def help(interaction):
     embed=discord.Embed(title="Help & Commands List", description="Thank you for using this crappy bot, hope you liked it so far.", color=0x04ff00)
     embed.add_field(name=f"/help", value=f"Displays this message and currently supported commands", inline=False)
     embed.add_field(name=f"/fees", value=f"Shows BTC fees depending on how fast you need it confirmed", inline=False)
-    embed.add_field(name=f"/price", value=f"used as /price <BTC/ETH> to list current price of BTC or ETH (more crypto support soon)", inline=False)
+    embed.add_field(name=f"/price", value=f"used as /price <crypto currency> (ex BTC/ETH)", inline=False)
+    embed.add_field(name=f"/cryptos", value=f"used to get currently supported list of crypto-currencies for /price", inline=False)
     embed.add_field(name=f"/check", value=f"used to check a BTC transaction for confirmations and list how many confirmations transaction has if confirmed.", inline=False)
     embed.set_footer(text="Made with ❤ by banonkiel#0001")
     await interaction.response.send_message(embed=embed)
