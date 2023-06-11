@@ -7,6 +7,11 @@ def get_config():
         config = json.load(file_object)
     return config
 
+def checkAuth(id):
+    if(id == config['ownerID']):
+        return True
+    return False
+
 # Check if config.json exists in the directory
 if(os.path.exists('config.json') == False):
     print("[ERROR] Config.json not found.")
@@ -54,6 +59,11 @@ tree = app_commands.CommandTree(client)
 # https://stackoverflow.com/questions/14989481/blockchain-api-to-determine-transaction-confirmations
 @tree.command(name = "check", description = "Used to check transaction confirmation status")
 async def check(interaction, txid:str):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        return
+    
     res = requests.get(f'https://mempool.space/api/tx/{txid}/status')
     if(res.status_code != 200):
         await interaction.response.send_message(f"is {txid} a valid TXID? :'(")
@@ -76,6 +86,11 @@ async def check(interaction, txid:str):
 
 @tree.command(name = "fees", description = "Used to get optimal BTC fees")
 async def fees(interaction):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        return
+
     res = requests.get('https://mempool.space/api/v1/fees/recommended')
     res2 = requests.get("https://mempool.space/api/mempool")
     if(res.status_code != 200 or res2.status_code != 200):
@@ -96,6 +111,10 @@ async def fees(interaction):
 
 @tree.command(name = "cryptos", description = "Used to get currently supported Crypto-currencies list.")
 async def cryptos(interaction):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        return
     res = ""
     for i in crypto_list:
         res += i + " "
@@ -106,6 +125,11 @@ async def cryptos(interaction):
 
 @tree.command(name="price", description = "Used to get current BTC price")
 async def price(interaction, crypto:str):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        return
+
     headers = {
         'Accepts': 'application/json',
         "X-CMC_PRO_API_KEY": API_KEY
@@ -124,7 +148,6 @@ async def price(interaction, crypto:str):
     else:
         resp = res.json()
         price = resp['data']['quote']['USD']['price']
-        # price = '%.2f'%(price)
         price = f"{price:,.2f}"
         embed=discord.Embed(title=f"Current {crypto} Price", description=f"Below you can see current {crypto}'s Price", color=0x04ff00)
         embed.add_field(name=f"{crypto} Price", value=f"${price} USD", inline=False)
@@ -134,6 +157,11 @@ async def price(interaction, crypto:str):
 
 @tree.command(name = "help", description = "Bot help & Commands List")
 async def help(interaction):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        return
+
     embed=discord.Embed(title="Help & Commands List", description="Thank you for using this crappy bot, hope you liked it so far.", color=0x04ff00)
     embed.add_field(name=f"/help", value=f"Displays this message and currently supported commands", inline=False)
     embed.add_field(name=f"/fees", value=f"Shows BTC fees depending on how fast you need it confirmed", inline=False)
