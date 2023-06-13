@@ -8,7 +8,7 @@ def get_config():
     return config
 
 def checkAuth(id):
-    if(id == config['ownerID']):
+    if(id == OWNER_ID):
         return True
     return False
 
@@ -27,6 +27,7 @@ crypto_list = {"BTC", "ETH", "BCH", "LTC", "XRP", "SOL", "XMR", "DOGE"}
 # Another way of using this would be a config file or env variables
 DISCORD_TOKEN = config['discord_token']
 API_KEY = config['api_key']
+OWNER_ID = config['ownerID']
 
 # Let's confirm Discord Token is -probably- valid from default config.json
 if(DISCORD_TOKEN == "discord_bot_token_here" or DISCORD_TOKEN == None or DISCORD_TOKEN == ""):
@@ -36,6 +37,10 @@ if(DISCORD_TOKEN == "discord_bot_token_here" or DISCORD_TOKEN == None or DISCORD
 # Let's confirm API is -probably- valid from default config.json
 if(API_KEY == "api_key_here" or API_KEY == None or API_KEY == ""):
     print("[ERROR] Please add a valid CoinMarketCap API Key!")
+    exit()
+
+if(OWNER_ID == None or OWNER_ID == "your_discord_id_here" or OWNER_ID == ""):
+    print("[ERROR] Please add a valid Owner ID!")
     exit()
 
 class client(discord.Client):
@@ -61,7 +66,7 @@ tree = app_commands.CommandTree(client)
 async def check(interaction, txid:str):
     # check if owner is running the commands
     if(checkAuth(interaction.user.id)):
-        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
         return
     
     res = requests.get(f'https://mempool.space/api/tx/{txid}/status')
@@ -88,7 +93,7 @@ async def check(interaction, txid:str):
 async def fees(interaction):
     # check if owner is running the commands
     if(checkAuth(interaction.user.id)):
-        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
         return
 
     res = requests.get('https://mempool.space/api/v1/fees/recommended')
@@ -99,12 +104,12 @@ async def fees(interaction):
         resp = res.json()
         resp2 = res2.json()
         embed=discord.Embed(title="Optimal Fees", url=f"https://mempool.space/", description="Below you can see all the suggested fees.\n Remember that mining blocks might take longer if the network is congested.", color=0x04ff00)
-        embed.add_field(name=f"Within 10 mins (next block)", value=f"{resp['fastestFee']} sat/vB", inline=False)
-        embed.add_field(name=f"Within 30 mins", value=f"{resp['halfHourFee']} sat/vB", inline=False)
-        embed.add_field(name=f"Within 60 mins", value=f"{resp['hourFee']} sat/vB", inline=False)
-        embed.add_field(name=f"Don't hold your breath ", value=f"{resp['economyFee']} sat/vB", inline=False)
-        embed.add_field(name=f"Won't be purged: ", value=f"{resp['minimumFee']} sat/vB", inline=False)
-        embed.add_field(name=f"Currently Unconfirmed Transactions:", value=f"{resp2['count']:,} TXs", inline=False)
+        embed.add_field(name=f"Within 10 mins (next block): {resp['fastestFee']} sat/vB", value=f"", inline=False)
+        embed.add_field(name=f"Within 30 mins: {resp['halfHourFee']} sat/vB", value=f"", inline=False)
+        embed.add_field(name=f"Within 60 mins: {resp['hourFee']} sat/vB", value=f"", inline=False)
+        embed.add_field(name=f"Don't hold your breath: {resp['economyFee']} sat/vB", value=f"", inline=False)
+        embed.add_field(name=f"Won't be purged: {resp['minimumFee']} sat/vB", value=f"", inline=False)
+        embed.add_field(name=f"\u200b", value=f"Currently Unconfirmed Transactions: {resp2['count']:,} TXs", inline=False)
         embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
@@ -113,8 +118,9 @@ async def fees(interaction):
 async def cryptos(interaction):
     # check if owner is running the commands
     if(checkAuth(interaction.user.id)):
-        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
         return
+
     res = ""
     for i in crypto_list:
         res += i + " "
@@ -127,7 +133,7 @@ async def cryptos(interaction):
 async def price(interaction, crypto:str):
     # check if owner is running the commands
     if(checkAuth(interaction.user.id)):
-        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
         return
 
     headers = {
@@ -159,7 +165,7 @@ async def price(interaction, crypto:str):
 async def help(interaction):
     # check if owner is running the commands
     if(checkAuth(interaction.user.id)):
-        await interaction.response.send_message(f"Who the fuck is you? :'(")
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
         return
 
     embed=discord.Embed(title="Help & Commands List", description="Thank you for using this crappy bot, hope you liked it so far.", color=0x04ff00)
