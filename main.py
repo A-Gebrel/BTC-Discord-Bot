@@ -114,6 +114,25 @@ async def fees(interaction):
         embed.set_footer(text="Made with ❤ by banonkiel#0001")
         await interaction.response.send_message(embed=embed)
 
+@tree.command(name = "unconfirmed", description = "gets total unconfirmed transactions on the BTC network")
+async def unconfirmed(interaction):
+    # check if owner is running the commands
+    if(checkAuth(interaction.user.id)):
+        await interaction.response.send_message(f"~ Unauthorized Access ~")
+        return
+
+    res2 = requests.get("https://mempool.space/api/mempool")
+    if(res2.status_code != 200):
+        await interaction.response.send_message(f"Is mempool down? :'(")
+    else:
+        resp2 = res2.json()
+        embed=discord.Embed(title="Total Unconfirmed Transactions", url=f"https://mempool.space/", description="", color=0x04ff00)
+        embed.add_field(name=f"Currently Unconfirmed Transactions", value=f"{resp2['count']:,} TXs", inline=False)
+        embed.add_field(name=f"Fetched at", value=f"<t:{int(time.time())}:R>")
+        embed.set_footer(text="Made with ❤ by banonkiel#0001")
+        await interaction.response.send_message(embed=embed)
+
+
 @tree.command(name = "cryptos", description = "Used to get currently supported Crypto-currencies list.")
 async def cryptos(interaction):
     # check if owner is running the commands
@@ -173,6 +192,7 @@ async def help(interaction):
     embed.add_field(name=f"/fees", value=f"Shows BTC fees depending on how fast you need it confirmed", inline=False)
     embed.add_field(name=f"/price", value=f"used as /price <crypto currency> (ex BTC/ETH)", inline=False)
     embed.add_field(name=f"/cryptos", value=f"used to get currently supported list of crypto-currencies for /price", inline=False)
+    embed.add_field(name=f"/unconfirmed", value=f"gets total unconfirmed transactions on the BTC network", inline=False)
     embed.add_field(name=f"/check", value=f"used to check a BTC transaction for confirmations and list how many confirmations transaction has if confirmed.", inline=False)
     embed.set_footer(text="Made with ❤ by banonkiel#0001")
     await interaction.response.send_message(embed=embed)
